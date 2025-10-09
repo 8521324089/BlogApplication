@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Post</title>
+
+</head>
+<body>
+
+<div>
+    <div style="display:flex;flex-direction: column; justify-content: center; align-items: center;">
+        <div>
+            <h1 style="display:flex;justify-content:center;">New / Edit Post</h1>
+
+            <form th:action="@{/newpost}" th:object="${post}" method="post">
+
+                <div>
+                    <label for="title" style="font-size:x-large">Title</label>
+                    <input
+                            type="text"
+                            id="title"
+                            style="width : 80vw; font-size: large; padding: 10px;"
+                            th:field="*{title}"
+                            placeholder="Enter post title"
+                            required
+                    >
+                </div>
+                <br>
+
+                <div>
+                    <label for="tag" style="font-size:x-large">Tag</label>
+                    <input
+                            type="text"
+                            id="tag"
+                            style="width : 80vw; font-size: large; padding: 10px;"
+                            placeholder="Add tag"
+                    >
+                </div>
+                <br>
+
+                <div>
+                    <label for="content" style="font-size:x-large">Content</label><br>
+                    <textarea
+                            id="content"
+                            th:field="*{content}"
+                            class="form-control"
+                            style="width : 80vw; height : 60vh; font-size:large; padding:10px"
+                            placeholder="Write your post content..."
+                            required
+                    ></textarea>
+                </div>
+                <br>
+
+                <div style="display:flex; justify-content: center">
+                    <input type="submit" value="Publish" style="font-size:x-large">
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

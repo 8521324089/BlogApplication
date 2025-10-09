@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+
+    <style>
+        header{
+            display:flex;
+            justify-content:space-between;
+            padding:0 20px 0 20px;
+        }
+        #item {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        #item-content{
+            height: 250px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid black;
+
+        }
+
+    </style>
+
+</head>
+<body>
+    <div>
+        <header>
+            <h1>My BlogApplication</h1>
+            <div style="align-self:center;">
+                <div style="margin-bottom:20px">
+                    <input type="text" value="Search">
+                    <a href="#">Login</a>
+                </div>
+                <div>
+                    <label for="filter" >Filter</label>
+                    <select id="filter" name="filter">
+                        <option>By Date</option>
+                        <option>By Tag</option>
+                    </select>
+
+                    <label for="sort" >Sort By</label>
+                    <select id="sort" name="sort">
+                        <option>Ascending</option>
+                        <option>Descending</option>
+                    </select>
+
+                </div>
+            </div>
+        </header>
+        <hr>
+        <div id="item">
+            <form action="#" th:each="post : ${posts}">
+                <div id="item-content">
+                    <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
+                    <span th:text="${post.author}"></span>,
+                    <span th:text="${#temporals.format(post.created_at, 'dd MMM yyyy')}"></span>
+                    <p th:text="${post.content}"></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

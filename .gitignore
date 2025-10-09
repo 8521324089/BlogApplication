@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/Users/anjalikumari/Desktop/MB/BlogApplication/eval "$(ssh-agent -s)"
+/Users/anjalikumari/Desktop/MB/BlogApplication/eval "$(ssh-agent -s)".pub

@@ -1,4 +1,4 @@
-package com.blogapplication;
+package com.mountblue.blogapplication;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
