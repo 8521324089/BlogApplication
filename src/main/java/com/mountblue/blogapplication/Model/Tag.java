@@ -3,51 +3,51 @@ package com.mountblue.blogapplication.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity(name = "tags")
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @CreationTimestamp
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "tag_id")
-    private List<Post_tag> post;
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
+    private Set<Post> posts;
 
-    public Tag(String name, LocalDateTime updated_at, List<Post_tag> post) {
+    public Tag(String name, Set<Post> posts) {
         this.name = name;
-        this.updated_at = updated_at;
-        this.post = post;
+        this.posts = posts;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
-        this.updated_at = updated_at;
-    }
-
-    public void setPost(List<Post_tag> post) {
-        this.post = post;
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 
     @Override
     public String toString() {
         return "Tag{" +
                 "name='" + name + '\'' +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                ", post=" + post +
+                ", created_at=" + createdAt +
+                ", updated_at=" + updatedAt +
                 '}';
     }
 }

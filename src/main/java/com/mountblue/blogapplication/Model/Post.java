@@ -3,15 +3,19 @@ package com.mountblue.blogapplication.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "posts")
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,25 +28,31 @@ public class Post {
     private String author;
     private LocalDateTime published_at;
     private Boolean is_published;
-    @CreationTimestamp
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "post_id")
-    private List<Post_tag> tag;
+    @ManyToMany
+    @JoinTable(
+            name = "post_tag",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
-    @OneToMany(mappedBy = "post_id")
+    @OneToMany(mappedBy = "post")
     private List<Comment> comment;
 
-    public Post(String title, String excerpt, String content, String author, LocalDateTime published_at, Boolean is_published, LocalDateTime updated_at, List<Post_tag> tag, List<Comment> comment) {
+    public Post(String title, String excerpt, String content, String author, LocalDateTime published_at, Boolean is_published, Set<Tag> tags, List<Comment> comment) {
         this.title = title;
         this.excerpt = excerpt;
         this.content = content;
         this.author = author;
         this.published_at = published_at;
         this.is_published = is_published;
-        this.updated_at = updated_at;
-        this.tag = tag;
+        this.tags = tags;
         this.comment = comment;
     }
 
@@ -70,12 +80,8 @@ public class Post {
         this.is_published = is_published;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
-        this.updated_at = updated_at;
-    }
-
-    public void setTag(List<Post_tag> tag) {
-        this.tag = tag;
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     public void setComment(List<Comment> comment) {
@@ -91,9 +97,8 @@ public class Post {
                 ", author='" + author + '\'' +
                 ", published_at=" + published_at +
                 ", is_published=" + is_published +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                ", tag=" + tag +
+                ", created_at=" + createdAt +
+                ", updated_at=" + updatedAt +
                 ", comment=" + comment +
                 '}';
     }

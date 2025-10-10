@@ -58,7 +58,7 @@
                 <div id="item-content">
                     <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
                     <span th:text="${post.author}"></span>,
-                    <span th:text="${#temporals.format(post.created_at, 'dd MMM yyyy')}"></span>
+                    <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}"></span>
                     <p th:text="${post.content}"></p>
                 </div>
             </form>
