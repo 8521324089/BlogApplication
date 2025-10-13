@@ -17,7 +17,7 @@
             gap: 20px;
         }
         #item-content{
-            height: 250px;
+            height: 170px;
             padding: 10px;
             margin: 10px;
             border: 2px solid black;
@@ -28,40 +28,62 @@
 
 </head>
 <body>
-    <div>
-        <header>
-            <h1>My BlogApplication</h1>
-            <div style="align-self:center;">
-                <div style="margin-bottom:20px">
-                    <input type="text" value="Search">
-                    <a href="#">Login</a>
-                </div>
-                <div>
-                    <label for="filter" >Filter</label>
-                    <select id="filter" name="filter">
-                        <option>By Date</option>
-                        <option>By Tag</option>
+<div>
+    <header>
+        <h1>My BlogApplication</h1>
+        <div style="align-self:center;">
+            <div>
+                <form th:action="@{/post/filter}" method="get"  style="display:flex">
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search..." >
+
+                    <select id="authors" name="authors" >
+                        <option value="">All Authors</option>
+                        <option th:each="author : ${authors}"
+                                th:value="${author}"
+                                th:text="${author}"
+                                th:selected="${selectedAuthors != null} ? ${selectedAuthors.contains(author)} : false">
+                        </option>
                     </select>
 
-                    <label for="sort" >Sort By</label>
+
+                    <select name="tags">
+                        <option value="">All Tags</option>
+                        <option th:each="tag : ${tags}" th:value="${tag.name}" th:text="${tag.name}"
+                                th:selected="${selectedTags != null} ? ${selectedTags.contains(tag.name)} : false"></option>
+                    </select>
+
+
+                    <label for="fromDate" style="align-self:center">From:</label>
+                    <input type="date" id="fromDate" name="fromDate"
+                           th:value="${fromDate != null} ? ${fromDate} : ''"><br><br>
+
+                    <label for="toDate" style="align-self:center">To:</label>
+                    <input type="date" id="toDate" name="toDate"
+                           th:value="${toDate != null} ? ${toDate} : ''">
+
+
                     <select id="sort" name="sort">
-                        <option>Ascending</option>
-                        <option>Descending</option>
+                        <option value="">Sort By</option>
+                        <option value="asc" th:selected="${selectedSort == 'asc'}">Oldest First</option>
+                        <option value="desc" th:selected="${selectedSort == 'desc'}">Newest First</option>
                     </select>
 
-                </div>
+                    <button type="submit">Filter</button>
+                </form>
+                <a href="#">Login</a>
             </div>
-        </header>
-        <hr>
-        <div id="item">
-            <form action="#" th:each="post : ${posts}">
-                <div id="item-content">
-                    <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
-                    <span th:text="${post.author}"></span>,
-                    <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}"></span>
-                    <p th:text="${post.content}"></p>
-                </div>
-            </form>
         </div>
+    </header>
+    <hr>
+    <div id="item">
+        <a th:href="@{/post/{id}(id=${post.id})}" th:each="post : ${posts}" style="text-decoration:none; color:inherit;">
+            <div id="item-content">
+                <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
+                <span th:text="${post.author}"></span>,
+                <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}"></span>
+                <p th:text="${post.excerpt}"></p>
+            </div>
+        </a>
     </div>
+</div>
 </body>

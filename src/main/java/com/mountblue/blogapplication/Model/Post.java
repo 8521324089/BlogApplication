@@ -3,7 +3,7 @@ package com.mountblue.blogapplication.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +14,7 @@ import java.util.Set;
 
 @Entity(name = "posts")
 @Getter
+@Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
@@ -42,64 +43,17 @@ public class Post {
     )
     private Set<Tag> tags;
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comment;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
-    public Post(String title, String excerpt, String content, String author, LocalDateTime published_at, Boolean is_published, Set<Tag> tags, List<Comment> comment) {
-        this.title = title;
-        this.excerpt = excerpt;
-        this.content = content;
-        this.author = author;
-        this.published_at = published_at;
-        this.is_published = is_published;
-        this.tags = tags;
-        this.comment = comment;
+
+    public String getAllTags(){
+        String allTag = this.getTags().toString();
+        return allTag.substring(1,allTag.length()-1);
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setExcerpt(String excerpt) {
-        this.excerpt = excerpt;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setPublished_at(LocalDateTime published_at) {
-        this.published_at = published_at;
-    }
-
-    public void setIs_published(Boolean is_published) {
-        this.is_published = is_published;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public void setComment(List<Comment> comment) {
-        this.comment = comment;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "title='" + title + '\'' +
-                ", excerpt='" + excerpt + '\'' +
-                ", content='" + content + '\'' +
-                ", author='" + author + '\'' +
-                ", published_at=" + published_at +
-                ", is_published=" + is_published +
-                ", created_at=" + createdAt +
-                ", updated_at=" + updatedAt +
-                ", comment=" + comment +
-                '}';
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setPost(this);
     }
 }

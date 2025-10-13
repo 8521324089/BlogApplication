@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${post.title}">Post Detail</title>
+
+    <style>
+        header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .post-meta {
+            color: gray;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .tags {
+            margin-top: 20px;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #ddd;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-right: 5px;
+            font-size: 13px;
+        }
+        .content {
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>My BlogApplication</h2>
+    <div>
+        <a th:href="@{/}">Home</a>
+        <a href="#">Login</a>
+    </div>
+</header>
+
+<div class="container">
+    <h1 th:text="${post.title}">Post Title</h1>
+    <div class="post-meta">
+        <span th:text="${post.author}">Author Name</span> •
+        <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
+    </div>
+    <div>
+        <span th:text="${post.excerpt}">Excerpt</span>
+    </div>
+    <div class="content" th:text="${post.content}">
+        Post content goes here...
+    </div>
+
+    <div class="tags" th:if="${post.tags != null}">
+        <strong>Tags:</strong>
+        <span th:each="tag : ${post.tags}" th:text="${tag.name}" class="tag"></span>
+    </div>
+
+    <div style="margin-top:20px">
+        <a th:href="@{/post/{id}/update(id=${post.id})}"><button>Edit</button></a>
+        <a th:href="@{/post/{id}/delete(id=${post.id})}"><button>Delete</button></a>
+    </div>
+
+</div>
+
+<div>
+    <form th:object="${post}" th:action="@{/post/{id}/comment(id=${post.id})}" method="post">
+
+        <h3>Comments</h3>
+
+        <!-- Show existing comments -->
+        <div th:if="${post.comments != null}">
+            <div th:each="comment : ${post.comments}"
+                 class="comment-box"
+                 style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+
+                <p><strong th:text="${comment.name}">User Name</strong>
+                    (<span th:text="${comment.email}">email@example.com</span>)</p>
+
+                <p th:text="${comment.content}">Sample comment text</p>
+
+                <small th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"></small>
+
+                <!-- Edit and Delete buttons -->
+                <div style="margin-top: 5px;">
+                    <a th:href="@{/post/{postId}/comment/update/{id}(postId=${post.id}, id=${comment.id})}"
+                       style="margin-right: 10px;">
+                        Edit
+                    </a>
+
+                    <a th:href="@{/post/{postId}/comment/delete/{id}(postId=${post.id}, id=${comment.id})}"
+                       onclick="return confirm('Are you sure you want to delete this comment?');"
+                       style="color: red;">Delete</a>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Add new comment -->
+        <div th:object="${comment}">
+            <label for="name" style="font-size:large">Name:</label><br>
+            <input type="text" id="name" th:field="*{name}" style="width: 40vw; font-size: large; padding: 8px;" required><br>
+
+            <label for="email" style="font-size:large">Email:</label><br>
+            <input type="email" id="email" th:field="*{email}" style="width: 40vw; font-size: large; padding: 8px;" required><br>
+
+            <label for="comment" style="font-size:large">Add a Comment:</label><br>
+            <textarea id="comment" th:field="*{content}"
+                      style="width: 40vw; height: 20vh; font-size: large; padding: 10px;"
+                      placeholder="Write your comment here..." required></textarea>
+        </div>
+
+        <br>
+        <button type="submit" style="margin-top:10px; font-size:large;">Post Comment</button>
+    </form>
+</div>
+
+</body>
+</html>

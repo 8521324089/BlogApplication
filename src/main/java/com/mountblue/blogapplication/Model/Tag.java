@@ -3,7 +3,7 @@ package com.mountblue.blogapplication.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +13,7 @@ import java.util.Set;
 
 @Entity(name = "tags")
 @Getter
+@Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Tag {
@@ -34,20 +35,8 @@ public class Tag {
         this.posts = posts;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
-
     @Override
     public String toString() {
-        return "Tag{" +
-                "name='" + name + '\'' +
-                ", created_at=" + createdAt +
-                ", updated_at=" + updatedAt +
-                '}';
+        return name;
     }
 }
