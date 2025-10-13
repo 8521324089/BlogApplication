@@ -11,10 +11,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity(name = "tags")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tags")
 @EntityListeners(AuditingEntityListener.class)
 public class Tag {
     @Id

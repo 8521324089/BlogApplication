@@ -19,15 +19,15 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
 
-    public Set<Tag> addTag(String tags){
+    public Set<Tag> addTag(String tags) {
         Set<Tag> allTags = new HashSet<>();
-        if(!tags.trim().isEmpty()){
+        if (!tags.trim().isEmpty()) {
             Set<String> tagSet = new HashSet<>(List.of(tags.trim().split(",")));
-            for(String tagName:tagSet){
-                if(!tagName.trim().isEmpty()){
+            for (String tagName : tagSet) {
+                if (!tagName.trim().isEmpty()) {
                     Tag savedTag = tagRepository.findByName(tagName.trim());
-                    if(savedTag==null){
-                        savedTag = tagRepository.save(new Tag(tagName.trim(),new HashSet<Post>()));
+                    if (savedTag == null) {
+                        savedTag = tagRepository.save(new Tag(tagName.trim(), new HashSet<Post>()));
                     }
                     allTags.add(savedTag);
                 }
@@ -36,7 +36,7 @@ public class TagService {
         return allTags;
     }
 
-    public List<Tag> getAllTags(){
+    public List<Tag> getAllTags() {
         return tagRepository.findAll();
     }
 }

@@ -81,8 +81,12 @@
     </div>
 
     <div style="margin-top:20px">
-        <a th:href="@{/post/{id}/update(id=${post.id})}"><button>Edit</button></a>
-        <a th:href="@{/post/{id}/delete(id=${post.id})}"><button>Delete</button></a>
+        <a th:href="@{/post/{id}/update(id=${post.id})}">
+            <button>Edit</button>
+        </a>
+        <a th:href="@{/post/{id}/delete(id=${post.id})}">
+            <button>Delete</button>
+        </a>
     </div>
 
 </div>
@@ -124,10 +128,12 @@
         <!-- Add new comment -->
         <div th:object="${comment}">
             <label for="name" style="font-size:large">Name:</label><br>
-            <input type="text" id="name" th:field="*{name}" style="width: 40vw; font-size: large; padding: 8px;" required><br>
+            <input type="text" id="name" th:field="*{name}" style="width: 40vw; font-size: large; padding: 8px;"
+                   required><br>
 
             <label for="email" style="font-size:large">Email:</label><br>
-            <input type="email" id="email" th:field="*{email}" style="width: 40vw; font-size: large; padding: 8px;" required><br>
+            <input type="email" id="email" th:field="*{email}" style="width: 40vw; font-size: large; padding: 8px;"
+                   required><br>
 
             <label for="comment" style="font-size:large">Add a Comment:</label><br>
             <textarea id="comment" th:field="*{content}"

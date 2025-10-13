@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Entity(name = "posts")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "posts")
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
     @Id
@@ -27,7 +28,7 @@ public class Post {
     @Column(columnDefinition = "text")
     private String content;
     private String author;
-    private LocalDateTime published_at;
+    private LocalDateTime publishedAt;
     private Boolean is_published;
     @CreatedDate
     @Column(updatable = false)
@@ -47,9 +48,9 @@ public class Post {
     private List<Comment> comments;
 
 
-    public String getAllTags(){
+    public String getAllTags() {
         String allTag = this.getTags().toString();
-        return allTag.substring(1,allTag.length()-1);
+        return allTag.substring(1, allTag.length() - 1);
     }
 
     public void addComment(Comment comment) {

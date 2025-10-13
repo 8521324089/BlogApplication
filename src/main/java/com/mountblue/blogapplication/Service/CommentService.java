@@ -17,7 +17,7 @@ public class CommentService {
         this.postService = postService;
     }
 
-    public void addComment(Long postId,Comment comment) {
+    public void addComment(Long postId, Comment comment) {
         Post savedPost = postService.getById(postId);
         savedPost.addComment(comment);
 

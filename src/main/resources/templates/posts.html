@@ -33,10 +33,11 @@
         <h1>My BlogApplication</h1>
         <div style="align-self:center;">
             <div>
-                <form th:action="@{/post/filter}" method="get"  style="display:flex">
-                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search..." >
+                <form th:action="@{/post/filter}" method="get" style="display:flex">
+                    <input type="search" name="keyword" th:value="${keyword}" placeholder="Search...">
+                    <input type="hidden" name="prevKeyword" th:value="${prevKeyword}">
 
-                    <select id="authors" name="authors" >
+                    <select id="authors" name="authors">
                         <option value="">All Authors</option>
                         <option th:each="author : ${authors}"
                                 th:value="${author}"
@@ -51,7 +52,6 @@
                         <option th:each="tag : ${tags}" th:value="${tag.name}" th:text="${tag.name}"
                                 th:selected="${selectedTags != null} ? ${selectedTags.contains(tag.name)} : false"></option>
                     </select>
-
 
                     <label for="fromDate" style="align-self:center">From:</label>
                     <input type="date" id="fromDate" name="fromDate"
@@ -76,7 +76,8 @@
     </header>
     <hr>
     <div id="item">
-        <a th:href="@{/post/{id}(id=${post.id})}" th:each="post : ${posts}" style="text-decoration:none; color:inherit;">
+        <a th:href="@{/post/{id}(id=${post.id})}" th:each="post : ${posts}"
+           style="text-decoration:none; color:inherit;">
             <div id="item-content">
                 <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
                 <span th:text="${post.author}"></span>,
@@ -84,6 +85,20 @@
                 <p th:text="${post.excerpt}"></p>
             </div>
         </a>
+    </div>
+    <div style="text-align: center; margin-top: 20px">
+        <div style="margin-top: 10px;display:flex;justify-content:center;align-items: center;">
+            <a th:if="${currPage > 0}"
+               th:href="@{/(page=${currPage-1})}">
+                <button>Previous</button>
+            </a>
+            <p th:text="${currPage+1}"></p>
+            <a th:if="${currPage + 1 < totalPages}"
+               th:href="@{/(page=${currPage + 1})}">
+                <button>Next</button>
+            </a>
+        </div>
+
     </div>
 </div>
 </body>

@@ -10,10 +10,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "Comments")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "comments")
 @EntityListeners(AuditingEntityListener.class)
 public class Comment {
     @Id
