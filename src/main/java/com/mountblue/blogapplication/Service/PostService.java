@@ -95,13 +95,19 @@ public class PostService {
 
         boolean hasAuthors = authors != null && !authors.isEmpty();
         boolean hasTags = tags != null && !tags.isEmpty();
+        Long tagsSize = tags==null?(long)0:(long)tags.size();
+        Long authorSize = authors==null?(long)0:(long)authors.size();
 
-        authors = authors.stream()
+        if(authors!=null)
+            authors = authors.stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
-        tags = tags.stream()
+        if(tags!=null)
+            tags = tags.stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
-        return postRepository.searchFilterSort(keyword, authors, tags, fromDate, toDate, hasAuthors, hasTags, (long) tags.size(), (long) authors.size(), pageable);
+        if(toDate!=null)
+            toDate = toDate.plusDays(1);
+        return postRepository.searchFilterSort(keyword, authors, tags, fromDate, toDate, hasAuthors, hasTags, tagsSize, authorSize, pageable);
     }
 }

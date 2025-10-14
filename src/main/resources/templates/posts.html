@@ -89,12 +89,28 @@
     <div style="text-align: center; margin-top: 20px">
         <div style="margin-top: 10px;display:flex;justify-content:center;align-items: center;">
             <a th:if="${currPage > 0}"
-               th:href="@{/(page=${currPage-1})}">
+               th:href="@{/post/filter(
+                page=${currPage-1},
+                keyword=${keyword},
+                authors=${selectedAuthors},
+                tags=${selectedTags},
+                fromDate=${fromDate},
+                toDate=${toDate},
+                sort=${selectedSort}
+           )}">
                 <button>Previous</button>
             </a>
             <p th:text="${currPage+1}"></p>
             <a th:if="${currPage + 1 < totalPages}"
-               th:href="@{/(page=${currPage + 1})}">
+               th:href="@{/post/filter(
+                page=${currPage+1},
+                keyword=${keyword},
+                authors=${selectedAuthors},
+                tags=${selectedTags},
+                fromDate=${fromDate},
+                toDate=${toDate},
+                sort=${selectedSort}
+           )}">
                 <button>Next</button>
             </a>
         </div>
