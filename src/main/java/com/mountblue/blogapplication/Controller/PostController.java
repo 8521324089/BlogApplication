@@ -47,13 +47,13 @@ public class PostController {
 
     @PostMapping("/newpost")
     public String publishPost(@ModelAttribute Post post, @RequestParam String allTag) {
-        postService.savePost(post, allTag);
-        return "redirect:/";
+        Post savedPost = postService.savePost(post, allTag);
+        return "redirect:/post/"+savedPost.getId();
     }
 
     @GetMapping("/post/{id}")
     public String getPostById(@PathVariable("id") Long id, Model model) {
-        Post post = postService.findPostById(id);
+        Post post = postService.getById(id);
         model.addAttribute("post", post);
         model.addAttribute("comment", new Comment());
         return "post-detail";
@@ -61,16 +61,20 @@ public class PostController {
 
     @GetMapping("/post/{id}/delete")
     public String deletePost(@PathVariable("id") Long id) {
-        postService.deletePost(id);
-        return "redirect:/";
+        if(postService.deletePost(id))
+            return "redirect:/";
+        else return "redirect:/post/" + id;
     }
 
     @GetMapping("/post/{id}/update")
     public String updatePost(@PathVariable("id") Long id, Model model) {
-        Post post = postService.getById(id);
-        model.addAttribute("post", post);
-        model.addAttribute("allTag", post.getAllTags());
-        return "new-post";
+        Post post = postService.findPostById(id);
+        if (post != null) {
+            model.addAttribute("post", post);
+            model.addAttribute("allTag", post.getAllTags());
+            return "new-post";
+        }
+        return "redirect:/post/{id}";
     }
 
     @GetMapping("/post/filter")

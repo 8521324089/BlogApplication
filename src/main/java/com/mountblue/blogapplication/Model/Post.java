@@ -47,10 +47,16 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
     public String getAllTags() {
-        String allTag = this.getTags().toString();
-        return allTag.substring(1, allTag.length() - 1);
+        if(this.getTags()!=null) {
+            String allTag = this.getTags().toString();
+            return allTag.substring(1, allTag.length() - 1);
+        }
+        else return "";
     }
 
     public void addComment(Comment comment) {

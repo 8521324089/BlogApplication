@@ -20,23 +20,32 @@ public class CommentService {
     public void addComment(Long postId, Comment comment) {
         Post savedPost = postService.getById(postId);
         savedPost.addComment(comment);
-
         postService.savePost(savedPost);
     }
 
-    public void updateComment(Comment comment) {
-        Comment existingComment = commentRepository.findById(comment.getId()).orElse(new Comment());
-        Post post = existingComment.getPost();
-        comment.setPost(post);
-        commentRepository.save(comment);
+    public boolean updateComment(Comment comment,Long postId) {
+        if(postService.getAuthentication(postId)) {
+            Comment existingComment = commentRepository.findById(comment.getId()).orElse(new Comment());
+            Post post = existingComment.getPost();
+            comment.setPost(post);
+            commentRepository.save(comment);
+            return true;
+        }
+        return false;
     }
 
-    public void deleteComment(Long id) {
-        commentRepository.deleteById(id);
+    public boolean deleteComment(Long id, Long postId) {
+        if(postService.getAuthentication(postId)) {
+            commentRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
-    public Comment findById(Long id) {
-        return commentRepository.findById(id).get();
+    public Comment findById(Long id,Long postId) {
+        if(postService.getAuthentication(postId)){
+            return commentRepository.findById(id).get();
+        }
+        return null;
     }
-
 }

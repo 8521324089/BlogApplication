@@ -1,12 +1,15 @@
 package com.mountblue.blogapplication.Service;
 
 import com.mountblue.blogapplication.Model.Post;
+import com.mountblue.blogapplication.Model.User;
 import com.mountblue.blogapplication.Repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,31 +22,61 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
+    private final UserService userService;
 
     @Autowired
-    private PostService(PostRepository postRepository, TagService tagService) {
+    private PostService(PostRepository postRepository, TagService tagService, UserService userService) {
         this.postRepository = postRepository;
         this.tagService = tagService;
+        this.userService = userService;
+    }
+
+    public boolean getAuthentication(Long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication.getPrincipal().equals("anonymousUser")) {
+            return false;
+        }
+        Post post = getById(id);
+        if (post == null) {
+            return false;
+        }
+        User currentUser = (User) userService.getByUsername(authentication.getName()).orElse(new User());
+        return currentUser.getRole().equals("ADMIN") || (post.getUser() != null && post.getUser().getEmail().equals(currentUser.getEmail()));
     }
 
     public Post savePost(Post post) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) userService.getByUsername(authentication.getName()).orElse(new User());
+        post.setUser(user);
+        post.setAuthor(user.getName());
         return postRepository.save(post);
     }
 
-    public Post savePost(Post post, String tags) {
+    public Post savePost(Post post, String tags){
         String content = post.getContent();
-        if (!content.isEmpty()) {
+        if (content != null && !content.isEmpty()) {
             String excerpt = content.trim().substring(0, Math.min(content.trim().length(), 300));
             post.setExcerpt(excerpt);
         }
         post.setTags(tagService.addTag(tags));
         if (post.getId() != null) {
-            Post savedPost = postRepository.findById(post.getId()).get();
-            post.setAuthor(savedPost.getAuthor());
-            post.setComments(savedPost.getComments());
-            post.setIs_published(savedPost.getIs_published());
-            post.setPublishedAt(savedPost.getPublishedAt());
+            Post existingPost = postRepository.findById(post.getId()).orElse(null);
+            if(existingPost!=null && getAuthentication(existingPost.getId())){
+                post.setAuthor(existingPost.getAuthor());
+                post.setComments(existingPost.getComments());
+                post.setIs_published(existingPost.getIs_published());
+                post.setPublishedAt(existingPost.getPublishedAt());
+                post.setUser(existingPost.getUser());
+            }else new Post();
         }
+        else {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User user = (User) userService.getByUsername(authentication.getName()).orElse(new User());
+            post.setUser(user);
+            post.setAuthor(user.getName());
+        }
+
         return postRepository.save(post);
     }
 
@@ -55,24 +88,26 @@ public class PostService {
     }
 
     public Post findPostById(Long id) {
-        return postRepository.findById(id)
-                .orElse(new Post());
+        if(getAuthentication(id)){
+            return postRepository.findById(id).orElse(new Post());
+        }
+        return null;
     }
 
     public Set<String> getAllAuthor() {
         return new HashSet<>(postRepository.findAllAuthors());
     }
 
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    public boolean deletePost(Long id) {
+        if (getAuthentication(id)){
+            postRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public Post getById(Long id) {
         return postRepository.findById(id).orElse(new Post());
-    }
-
-    public Post findById(Long postId) {
-        return postRepository.findById(postId).orElse(new Post());
     }
 
     public Page<Post> searchByKeyword(String keyword, int page, int size) {

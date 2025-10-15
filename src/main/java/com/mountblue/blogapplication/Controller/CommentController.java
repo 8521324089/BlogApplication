@@ -28,21 +28,26 @@ public class CommentController {
 
     @GetMapping("/comment/update/{id}")
     public String showCommentForm(@PathVariable Long postId, @PathVariable Long id, Model model) {
-        Comment comment = commentService.findById(id);
-        model.addAttribute("postId", postId);
-        model.addAttribute("comment", comment);
-        return "edit_comment";
+        Comment comment = commentService.findById(id,postId);
+        if(comment!=null) {
+            model.addAttribute("postId", postId);
+            model.addAttribute("comment", comment);
+            return "edit_comment";
+        }
+        else{
+            return "redirect:/post/{postId}";
+        }
     }
 
     @PostMapping("/comment/update/{id}")
     public String updateComment(@PathVariable Long postId, @PathVariable Long id, @ModelAttribute Comment comment) {
-        commentService.updateComment(comment);
-        return "redirect:/post/" + postId;
+        commentService.updateComment(comment,postId);
+            return "redirect:/post/" + postId;
     }
 
     @GetMapping("/comment/delete/{id}")
     public String deleteComment(@PathVariable Long postId, @PathVariable Long id) {
-        commentService.deleteComment(id);
-        return "redirect:/post/" + postId;
+        commentService.deleteComment(id,postId);
+            return "redirect:/post/" + postId;
     }
 }

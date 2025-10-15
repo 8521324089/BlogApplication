@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,6 +33,10 @@
         <h1>My BlogApplication</h1>
         <div style="align-self:center;">
             <div>
+                <div sec:authorize="isAuthenticated()">
+                    <input type="text" th:value="${#authentication.principal.username}" disabled/>
+                </div>
+
                 <form th:action="@{/post/filter}" method="get" style="display:flex">
                     <input type="search" name="keyword" th:value="${keyword}" placeholder="Search...">
                     <input type="hidden" name="prevKeyword" th:value="${prevKeyword}">
@@ -70,7 +74,21 @@
 
                     <button type="submit">Filter</button>
                 </form>
-                <a href="#">Login</a>
+                <div>
+
+                    <div sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}">Login</a> |
+                        <a th:href="@{/register}">Register</a>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit">Logout</button>
+                        </form>
+                    </div>
+                    <a th:href="@{/newpost}"><b>Create Post</b></a>
+                </div>
+
             </div>
         </div>
     </header>

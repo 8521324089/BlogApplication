@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    @Column(unique = true)
     private String email;
     private String password;
+    private String role;
 
+    @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,orphanRemoval = true)
+    Set<Post> posts;
 }
