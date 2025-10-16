@@ -34,7 +34,7 @@
         <div style="align-self:center;">
             <div>
                 <div sec:authorize="isAuthenticated()">
-                    <input type="text" th:value="${#authentication.principal.username}" disabled/>
+                    <input type="text" th:value="${#authentication.principal.name}" disabled/>
                 </div>
 
                 <form th:action="@{/post/filter}" method="get" style="display:flex">

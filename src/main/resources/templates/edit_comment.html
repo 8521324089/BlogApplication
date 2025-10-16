@@ -3,7 +3,7 @@
 <head>
     <title>edit_comment</title>
 </head>
-<body>
+<body style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
 <form th:action="@{/post/{postId}/comment/update/{id}(postId=${postId}, id=${comment.id})}"
       th:object="${comment}" method="post">
 

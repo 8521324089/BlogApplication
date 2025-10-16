@@ -41,15 +41,18 @@ public class PostService {
         if (post == null) {
             return false;
         }
+
         User currentUser = (User) userService.getByUsername(authentication.getName()).orElse(new User());
         return currentUser.getRole().equals("ADMIN") || (post.getUser() != null && post.getUser().getEmail().equals(currentUser.getEmail()));
     }
 
     public Post savePost(Post post) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) userService.getByUsername(authentication.getName()).orElse(new User());
-        post.setUser(user);
-        post.setAuthor(user.getName());
+        User user = (User) userService.getByUsername(authentication.getName()).orElse(null);
+        if(user!=null) {
+            post.setUser(user);
+            post.setAuthor(user.getName());
+        }
         return postRepository.save(post);
     }
 
