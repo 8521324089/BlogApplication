@@ -2,6 +2,7 @@ package com.mountblue.blogapplication.Controller;
 
 import com.mountblue.blogapplication.Model.Comment;
 import com.mountblue.blogapplication.Model.Post;
+import com.mountblue.blogapplication.Model.User;
 import com.mountblue.blogapplication.Service.PostService;
 import com.mountblue.blogapplication.Service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,20 +49,24 @@ public class PostController {
     @PostMapping("/newpost")
     public String publishPost(@ModelAttribute Post post, @RequestParam String allTag) {
         Post savedPost = postService.savePost(post, allTag);
-        return "redirect:/post/"+savedPost.getId();
+        return "redirect:/post/" + savedPost.getId();
     }
 
     @GetMapping("/post/{id}")
     public String getPostById(@PathVariable("id") Long id, Model model) {
         Post post = postService.getById(id);
+        User user = post.getUser();
         model.addAttribute("post", post);
         model.addAttribute("comment", new Comment());
+        if (user != null) {
+            model.addAttribute("uName", user.getEmail());
+        }
         return "post-detail";
     }
 
     @GetMapping("/post/{id}/delete")
     public String deletePost(@PathVariable("id") Long id) {
-        if(postService.deletePost(id))
+        if (postService.deletePost(id))
             return "redirect:/";
         else return "redirect:/post/" + id;
     }

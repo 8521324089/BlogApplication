@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String showLoginForm(){
+    public String showLoginForm() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
@@ -31,24 +31,24 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String showRegisterForm(Model model){
+    public String showRegisterForm(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
             return "redirect:/";
         }
-        model.addAttribute("user",new User());
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping("/register")
-    public String createUser(@ModelAttribute User user,Model model){
+    public String createUser(@ModelAttribute User user, Model model) {
         User savedUser = userService.createUser(user);
-        if(savedUser.getId()==null){
-            model.addAttribute("user",user);
+        if (savedUser.getId() == null) {
+            model.addAttribute("user", user);
             return "register";
-        }else{
-            model.addAttribute("user",savedUser);
+        } else {
+            model.addAttribute("user", savedUser);
             return "redirect:/login";
         }
     }

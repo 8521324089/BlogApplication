@@ -1,4 +1,4 @@
-package com.mountblue.blogapplication.Cofig;
+package com.mountblue.blogapplication.Config;
 
 import com.mountblue.blogapplication.Model.User;
 import com.mountblue.blogapplication.Repository.UserRepository;
@@ -20,7 +20,7 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username)
-                .orElseThrow(()->new UsernameNotFoundException("UserName not Found" + username));
+                .orElseThrow(() -> new UsernameNotFoundException("UserName not Found" + username));
 
         return new UserDetail(user);
     }

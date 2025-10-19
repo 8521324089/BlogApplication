@@ -1,5 +1,6 @@
 package com.mountblue.blogapplication.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,18 +45,18 @@ public class Post {
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
 
     public String getAllTags() {
-        if(this.getTags()!=null) {
+        if (this.getTags() != null) {
             String allTag = this.getTags().toString();
             return allTag.substring(1, allTag.length() - 1);
-        }
-        else return "";
+        } else return "";
     }
 
     public void addComment(Comment comment) {

@@ -1,4 +1,4 @@
-package com.mountblue.blogapplication.Cofig;
+package com.mountblue.blogapplication.Config;
 
 import com.mountblue.blogapplication.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-public class UserDetail implements UserDetails , Serializable {
+public class UserDetail implements UserDetails, Serializable {
     private final User user;
 
     @Autowired
@@ -53,7 +53,7 @@ public class UserDetail implements UserDetails , Serializable {
         return true;
     }
 
-    public  String getName(){
+    public String getName() {
         return user.getName();
     }
 }

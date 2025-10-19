@@ -56,7 +56,7 @@
 
 <header>
     <h2>My BlogApplication</h2>
-    <div>
+    <div style="display:flex;flex-direction:column;justify-content:center;align-Items:baseline;">
         <a th:href="@{/}">Home</a>
         <div>
             <div sec:authorize="isAnonymous()">
@@ -93,7 +93,8 @@
         <span th:each="tag : ${post.tags}" th:text="${tag.name}" class="tag"></span>
     </div>
 
-    <div style="margin-top:20px">
+    <div style="margin-top:20px"
+         sec:authorize="isAuthenticated() and (hasRole('ADMIN') or #authentication.principal.username == #vars.uName)">
         <a th:href="@{/post/{id}/update(id=${post.id})}">
             <button>Edit</button>
         </a>
@@ -123,7 +124,8 @@
                 <small th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"></small>
 
                 <!-- Edit and Delete buttons -->
-                <div style="margin-top: 5px;">
+                <div style="margin-top: 5px;"
+                     sec:authorize="isAuthenticated() and (hasRole('ADMIN') or #authentication.principal.username == #vars.uName)">
                     <a th:href="@{/post/{postId}/comment/update/{id}(postId=${post.id}, id=${comment.id})}"
                        style="margin-right: 10px;">
                         Edit

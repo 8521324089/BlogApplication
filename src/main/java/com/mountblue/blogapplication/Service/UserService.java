@@ -21,14 +21,15 @@ public class UserService {
 
     public User createUser(User user) {
         user.setRole("AUTHOR");
-        if(userRepository.findByEmail(user.getEmail()).isEmpty()) {
+        if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         }
-        return new User();
+        return null;
     }
 
-    public Optional getByUsername(String username){
+    public Optional getByUsername(String username) {
         return userRepository.findByEmail(username);
     }
+
 }

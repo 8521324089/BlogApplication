@@ -20,6 +20,7 @@ public class TagService {
     }
 
     public Set<Tag> addTag(String tags) {
+        if (tags == null) return null;
         Set<Tag> allTags = new HashSet<>();
         if (!tags.trim().isEmpty()) {
             Set<String> tagSet = new HashSet<>(List.of(tags.trim().split(",")));

@@ -1,138 +1,250 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Posts</title>
 
     <style>
-        header{
-            display:flex;
-            justify-content:space-between;
-            padding:0 20px 0 20px;
+        :root { color-scheme: light dark; }
+        body {
+          font-family: system-ui, Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          line-height: 1.4;
         }
+
+        header {
+          display: grid;
+          gap: 12px;
+          justify-items: center;
+          padding: 12px;
+          border-bottom: 1px solid #ccc;
+        }
+
+        /* Centered, responsive filter layout */
+        .filters { display: flex; justify-content: center; width: 100%; }
+        form.filter-form {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          width: min(1000px, 95vw);
+          margin: 0 auto;
+          align-items: center;
+        }
+        @media (min-width: 768px) {
+          form.filter-form { grid-template-columns: repeat(6, 1fr); }
+        }
+
+        input, select, button {
+          padding: 6px;
+          font-size: 0.95rem;
+          border: 1px solid #aaa;
+          border-radius: 4px;
+          background: transparent;
+        }
+        button { cursor: pointer; }
+
+        /* CSS-only multi-select dropdown */
+        .msd { position: relative; display: inline-block; }
+        .msd-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          min-width: 180px;
+          padding: 6px 10px;
+          border: 1px solid #aaa;
+          border-radius: 4px;
+          background: transparent;
+          cursor: pointer;
+          user-select: none;
+        }
+        .msd-menu {
+          position: absolute;
+          z-index: 20;
+          left: 0;
+          margin-top: 4px;
+          width: min(280px, 90vw);
+          max-height: 260px;
+          overflow: auto;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          background: white;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+          display: none;
+          padding: 6px;
+        }
+        /* hide the toggle but keep it focusable for a11y */
+        .msd-toggle { position: absolute; opacity: 0; pointer-events: none; }
+        /* show menu when checked */
+        .msd-toggle:checked + .msd-btn + .msd-menu { display: block; }
+        .msd-option label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 4px;
+          cursor: pointer;
+        }
+
         #item {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          padding: 16px;
+          width: min(1100px, 95vw);
+          margin: 0 auto;
         }
-        #item-content{
-            height: 170px;
-            padding: 10px;
-            margin: 10px;
-            border: 2px solid black;
-
+        @media (min-width: 768px) {
+          #item { grid-template-columns: repeat(2, 1fr); }
         }
 
+        .card {
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          padding: 12px;
+        }
+        .card h2 { margin: 0 0 6px 0; font-size: 1rem; }
+        .card span { font-size: 0.85rem; }
+        .card p { font-size: 0.95rem; margin-top: 8px; }
+
+        .pagination { text-align: center; margin: 18px 0 28px; }
+        a { color: inherit; text-decoration: none; }
+        .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     </style>
-
 </head>
 <body>
-<div>
-    <header>
-        <h1>My BlogApplication</h1>
-        <div style="align-self:center;">
-            <div>
-                <div sec:authorize="isAuthenticated()">
-                    <input type="text" th:value="${#authentication.principal.name}" disabled/>
-                </div>
 
-                <form th:action="@{/post/filter}" method="get" style="display:flex">
-                    <input type="search" name="keyword" th:value="${keyword}" placeholder="Search...">
-                    <input type="hidden" name="prevKeyword" th:value="${prevKeyword}">
+<header>
+    <h2>My Blog Application</h2>
 
-                    <select id="authors" name="authors">
-                        <option value="">All Authors</option>
-                        <option th:each="author : ${authors}"
-                                th:value="${author}"
-                                th:text="${author}"
-                                th:selected="${selectedAuthors != null} ? ${selectedAuthors.contains(author)} : false">
-                        </option>
-                    </select>
-
-
-                    <select name="tags">
-                        <option value="">All Tags</option>
-                        <option th:each="tag : ${tags}" th:value="${tag.name}" th:text="${tag.name}"
-                                th:selected="${selectedTags != null} ? ${selectedTags.contains(tag.name)} : false"></option>
-                    </select>
-
-                    <label for="fromDate" style="align-self:center">From:</label>
-                    <input type="date" id="fromDate" name="fromDate"
-                           th:value="${fromDate != null} ? ${fromDate} : ''"><br><br>
-
-                    <label for="toDate" style="align-self:center">To:</label>
-                    <input type="date" id="toDate" name="toDate"
-                           th:value="${toDate != null} ? ${toDate} : ''">
-
-
-                    <select id="sort" name="sort">
-                        <option value="">Sort By</option>
-                        <option value="asc" th:selected="${selectedSort == 'asc'}">Oldest First</option>
-                        <option value="desc" th:selected="${selectedSort == 'desc'}">Newest First</option>
-                    </select>
-
-                    <button type="submit">Filter</button>
-                </form>
-                <div>
-
-                    <div sec:authorize="isAnonymous()">
-                        <a th:href="@{/login}">Login</a> |
-                        <a th:href="@{/register}">Register</a>
-                    </div>
-
-                    <div sec:authorize="isAuthenticated()">
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit">Logout</button>
-                        </form>
-                    </div>
-                    <a th:href="@{/newpost}"><b>Create Post</b></a>
-                </div>
-
-            </div>
-        </div>
-    </header>
-    <hr>
-    <div id="item">
-        <a th:href="@{/post/{id}(id=${post.id})}" th:each="post : ${posts}"
-           style="text-decoration:none; color:inherit;">
-            <div id="item-content">
-                <h2 style="margin-bottom:0px" th:text="${post.title}"></h2>
-                <span th:text="${post.author}"></span>,
-                <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}"></span>
-                <p th:text="${post.excerpt}"></p>
-            </div>
-        </a>
-    </div>
-    <div style="text-align: center; margin-top: 20px">
-        <div style="margin-top: 10px;display:flex;justify-content:center;align-items: center;">
-            <a th:if="${currPage > 0}"
-               th:href="@{/post/filter(
-                page=${currPage-1},
-                keyword=${keyword},
-                authors=${selectedAuthors},
-                tags=${selectedTags},
-                fromDate=${fromDate},
-                toDate=${toDate},
-                sort=${selectedSort}
-           )}">
-                <button>Previous</button>
-            </a>
-            <p th:text="${currPage+1}"></p>
-            <a th:if="${currPage + 1 < totalPages}"
-               th:href="@{/post/filter(
-                page=${currPage+1},
-                keyword=${keyword},
-                authors=${selectedAuthors},
-                tags=${selectedTags},
-                fromDate=${fromDate},
-                toDate=${toDate},
-                sort=${selectedSort}
-           )}">
-                <button>Next</button>
-            </a>
+    <div class="row">
+        <div sec:authorize="isAuthenticated()">
+            <p><b th:text="${#authentication.principal.name}">Username</b></p>
         </div>
 
+        <div sec:authorize="isAnonymous()">
+            <a style="color:#007bff;" th:href="@{/login}">Login</a> |
+            <a style="color:#007bff;" th:href="@{/register}">Register</a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button style="color:red;" type="submit">Logout</button>
+            </form>
+            |
+            <a style="color:black;border:1px solid #007bff;border-radius:6px;padding:4px 10px;" th:href="@{/newpost}">Create
+                Post</a>
+        </div>
     </div>
+
+    <!-- Centered filter form -->
+    <div class="filters">
+        <form class="filter-form" th:action="@{/post/filter}" method="get">
+            <input type="search" name="keyword" th:value="${keyword}" placeholder="Search...">
+            <input type="hidden" name="prevKeyword" th:value="${prevKeyword}">
+
+            <!-- Authors dropdown (checkbox multi-select) -->
+            <div class="msd">
+                <input id="authors-toggle" class="msd-toggle" type="checkbox">
+                <label class="msd-btn" for="authors-toggle">
+                    <span>Authors</span>
+                    <span aria-hidden="true">▾</span>
+                </label>
+                <div class="msd-menu">
+                    <div class="msd-option" th:each="author : ${authors}">
+                        <label>
+                            <input type="checkbox"
+                                   name="authors"
+                                   th:value="${author}"
+                                   th:checked="${selectedAuthors != null} ? ${selectedAuthors.contains(author)} : false">
+                            <span th:text="${author}">Author</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags dropdown (checkbox multi-select) -->
+            <div class="msd">
+                <input id="tags-toggle" class="msd-toggle" type="checkbox">
+                <label class="msd-btn" for="tags-toggle">
+                    <span>Tags</span>
+                    <span aria-hidden="true">▾</span>
+                </label>
+                <div class="msd-menu">
+                    <div class="msd-option" th:each="tag : ${tags}">
+                        <label>
+                            <input type="checkbox"
+                                   name="tags"
+                                   th:value="${tag.name}"
+                                   th:checked="${selectedTags != null} ? ${selectedTags.contains(tag.name)} : false">
+                            <span th:text="${tag.name}">Tag</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <input type="date" id="fromDate" name="fromDate"
+                   th:value="${fromDate != null} ? ${fromDate} : ''">
+
+            <input type="date" id="toDate" name="toDate"
+                   th:value="${toDate != null} ? ${toDate} : ''">
+
+            <select id="sort" name="sort" title="Sort by date">
+                <option value="">Sort</option>
+                <option value="asc" th:selected="${selectedSort == 'asc'}">Oldest</option>
+                <option value="desc" th:selected="${selectedSort == 'desc'}">Newest</option>
+            </select>
+
+            <button style="color:black;background-color:gainsboro;" type="submit">Filter</button>
+        </form>
+    </div>
+</header>
+
+<!-- Posts -->
+<div id="item">
+    <a th:each="post : ${posts}" th:href="@{/post/{id}(id=${post.id})}">
+        <article class="card">
+            <h2 th:text="${post.title}"></h2>
+            <span th:text="${post.author}"></span>,
+            <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}"></span>
+            <p th:text="${post.excerpt}"></p>
+        </article>
+    </a>
 </div>
+
+<!-- Pagination -->
+<div class="pagination">
+    <a th:if="${currPage > 0}"
+       th:href="@{/post/filter(
+        page=${currPage-1},
+        keyword=${keyword},
+        authors=${selectedAuthors},
+        tags=${selectedTags},
+        fromDate=${fromDate},
+        toDate=${toDate},
+        sort=${selectedSort}
+     )}">
+        <button>Previous</button>
+    </a>
+
+    <span th:text="${currPage+1}"></span>
+
+    <a th:if="${currPage + 1 < totalPages}"
+       th:href="@{/post/filter(
+        page=${currPage+1},
+        keyword=${keyword},
+        authors=${selectedAuthors},
+        tags=${selectedTags},
+        fromDate=${fromDate},
+        toDate=${toDate},
+        sort=${selectedSort}
+     )}">
+        <button>Next</button>
+    </a>
+</div>
+
 </body>
+</html>

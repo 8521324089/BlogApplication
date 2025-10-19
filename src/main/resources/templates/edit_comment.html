@@ -1,25 +1,54 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>edit_comment</title>
+    <meta charset="UTF-8">
+    <title>Edit Comment</title>
 </head>
-<body style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
-<form th:action="@{/post/{postId}/comment/update/{id}(postId=${postId}, id=${comment.id})}"
-      th:object="${comment}" method="post">
+<body style="
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+">
 
-    <h3>Edit Comment</h3>
-    <input type="hidden" th:field="*{id}">
+<div style="
+        width: 90%;
+        max-width: 450px;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    ">
+    <form th:action="@{/post/{postId}/comment/update/{id}(postId=${postId}, id=${comment.id})}"
+          th:object="${comment}" method="post"
+          style="display: flex; flex-direction: column; width: 100%;">
 
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" th:field="*{name}" required><br>
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Edit Comment</h2>
 
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" th:field="*{email}" required><br>
+        <input type="hidden" th:field="*{id}">
 
-    <label for="content">Comment:</label><br>
-    <textarea id="content" th:field="*{content}" rows="5" required></textarea><br>
+        <label for="name" style="margin-bottom: 0.3rem;">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required
+               style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem;">
 
-    <button type="submit">Update Comment</button>
-</form>
+        <label for="email" style="margin-bottom: 0.3rem;">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required
+               style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem;">
+
+        <label for="content" style="margin-bottom: 0.3rem;">Comment:</label>
+        <textarea id="content" th:field="*{content}" rows="5" required
+                  style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1.5rem; resize: vertical;"></textarea>
+
+        <button type="submit"
+                style="padding: 0.6rem; background-color: #007bff; color: white;
+                           border: none; border-radius: 6px; cursor: pointer; font-size: 1rem;">
+            Update Comment
+        </button>
+    </form>
+</div>
+
 </body>
 </html>

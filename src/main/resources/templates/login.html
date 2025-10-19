@@ -4,34 +4,64 @@
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
-<body style="display:flex;flex-direction:column;justify-content:center;align-items:center">
-<h2>Login Page</h2>
 
-<div th:if="${param.error}">
-    <p style="color: red;">Invalid username or password</p>
+<body style="
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+">
+
+<div style="
+        width: 90%;
+        max-width: 400px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    ">
+
+    <h2 style="margin-bottom: 1.5rem;">Login Page</h2>
+
+    <div th:if="${param.error}">
+        <p style="color: red;">Invalid username or password</p>
+    </div>
+
+    <div th:if="${param.logout}">
+        <p style="color: green;">You have been logged out successfully</p>
+    </div>
+
+    <form th:action="@{/authenticateTheUser}" method="post" style="width: 100%;">
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display:block; margin-bottom:0.25rem;">Username:</label>
+            <input type="text" name="username" required
+                   style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label style="display:block; margin-bottom:0.25rem;">Password:</label>
+            <input type="password" name="password" required
+                   style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button type="submit"
+                    style="padding:0.5rem 1.2rem; border:none; background-color:#007bff; color:white; border-radius:6px; cursor:pointer;">
+                Login
+            </button>
+            <a th:href="@{/register}" style="color:#007bff; text-decoration:none;">Register</a>
+        </div>
+
+    </form>
+
 </div>
 
-
-<div th:if="${param.logout}">
-    <p style="color: green;">You have been logged out successfully</p>
-</div>
-
-<form th:action="@{/authenticateTheUser}" method="post">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="username" required>
-    </div>
-
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-    </div>
-
-    <div style="display:flex;justify-content:center;align-items:center">
-        <button type="submit">Login</button>
-        <a th:href="@{/register}">Register</a>
-    </div>
-
-</form>
 </body>
 </html>

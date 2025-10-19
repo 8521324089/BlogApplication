@@ -1,5 +1,6 @@
 package com.mountblue.blogapplication.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Tag {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags", cascade = CascadeType.ALL)
     private Set<Post> posts;
 

@@ -47,7 +47,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                   GROUP BY p.id
                       HAVING
                         ( :hasTags = false OR COUNT(DISTINCT LOWER(t.name)) = :tagCount )
-                        AND ( :hasAuthors = false OR COUNT(DISTINCT LOWER(p.author)) = :authorCount )
             """)
     Page<Post> searchFilterSort(
             @Param("keyword") String keyword,
